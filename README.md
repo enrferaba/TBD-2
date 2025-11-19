@@ -20,8 +20,12 @@ Biblioteca Online será una plataforma para consultar un catálogo digital de li
 ## Historial de trabajos realizados
 - **Trabajo1**: creación del repositorio base con entorno virtual, instalación offline de las dependencias mínimas (Django 5.2.8 y Pytest 9.0.1), generación del proyecto `biblioteca_config`, carpeta de tests global `tests/`, script `run_tests.py` y este archivo de contexto inicial.
 - **Trabajo2**: alta de la app principal `library`, definición de la ruta de inicio/health (`/`), estandarización de la convención `test_trabajoXX_*` y ampliación de la suite con los tests de Trabajo2.
+- **Trabajo3**: instalación de Django REST Framework, creación del endpoint JSON `/api/health/` y nuevos tests `tests/test_trabajo03_api_health.py` siguiendo la convención definida.
 
 ## Estado actual
-- La app principal se llama `library` y expone un endpoint de salud en la ruta `/`.
-- Las suites `tests/test_trabajo01_smoke.py` y `tests/test_trabajo02_library_app.py` se ejecutan con `./run_tests.py` y reportan cada test con nombres verbosos.
-- `README.md` incluye la convención de nombres de tests, el historial actualizado y el estado operativo tras Trabajo2.
+- La app principal se llama `library`, expone una ruta HTML mínima en `/` y una API JSON en `/api/health/`.
+- Las suites `tests/test_trabajo01_smoke.py`, `tests/test_trabajo02_library_app.py` y `tests/test_trabajo03_api_health.py` se ejecutan con `./run_tests.py` (modo `-vv`).
+- `README.md` documenta la convención de tests, el historial actualizado y el resumen operativo tras Trabajo3.
+
+## API actual
+- `GET /api/health/` → responde con JSON indicando `{"service": "Biblioteca Online", "status": "ok", "version": "trabajo3"}`.
