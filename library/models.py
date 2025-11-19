@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import ClassVar, Dict, Iterable, List
+from typing import Any, ClassVar, Dict, Iterable, List
 
 
 @dataclass(slots=True)
@@ -14,6 +14,7 @@ class Book:
     author: str
     published_year: int | None = None
     isbn: str | None = None
+    created_by: str | None = None
     id: int = field(init=False)
     created_at: datetime = field(init=False)
     updated_at: datetime = field(init=False)
@@ -38,8 +39,15 @@ class BookRepository:
         author: str,
         published_year: int | None = None,
         isbn: str | None = None,
+        created_by: str | None = None,
     ) -> Book:
-        book = Book(title=title, author=author, published_year=published_year, isbn=isbn)
+        book = Book(
+            title=title,
+            author=author,
+            published_year=published_year,
+            isbn=isbn,
+            created_by=created_by,
+        )
         book.id = cls._next_id
         cls._next_id += 1
         cls._records[book.id] = book
@@ -55,6 +63,21 @@ class BookRepository:
             return cls._records[book_id]
         except KeyError as exc:  # pragma: no cover - defensive programming
             raise LookupError(f"Book {book_id} not found") from exc
+
+    @classmethod
+    def update(cls, book_id: int, **fields: Any) -> Book:
+        book = cls.get(book_id)
+        for field, value in fields.items():
+            setattr(book, field, value)
+        book.updated_at = datetime.now(tz=UTC)
+        cls._records[book_id] = book
+        return book
+
+    @classmethod
+    def delete(cls, book_id: int) -> None:
+        if book_id not in cls._records:
+            raise LookupError(f"Book {book_id} not found")
+        del cls._records[book_id]
 
     @classmethod
     def replace_all(cls, books: Iterable[Book]) -> None:

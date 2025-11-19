@@ -10,22 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _env(key: str, default: str | None = None) -> str | None:
+    """Read environment variables with sensible defaults."""
+
+    return os.environ.get(key, default)
+
+
+def _env_bool(key: str, default: bool = False) -> bool:
+    value = os.environ.get(key)
+    if value is None:
+        return default
+    return value.strip().lower() not in {"0", "false", "no"}
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-b(itb^#fv38meimgk^l8n7(@v48=14^ssl8zbc=b2yl&@1_8_h"
+SECRET_KEY = _env("DJANGO_SECRET_KEY", "django-insecure-b(itb^#fv38meimgk^l8n7(@v48=14^ssl8zbc=b2yl&@1_8_h")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = []
+_allowed_hosts = _env("DJANGO_ALLOWED_HOSTS", "*")
+ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(",") if host.strip()] or ["*"]
 
 
 # Application definition
@@ -122,3 +137,19 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# MongoDB configuration (Trabajo8)
+MONGO_URI = _env("MONGO_URI", "mongodb://mongo:27017/biblioteca_online")
+MONGO_DB_NAME = _env("MONGO_DB_NAME", "biblioteca_online")
+MONGO_ACTIVITY_COLLECTION = _env("MONGO_ACTIVITY_COLLECTION", "activity_logs")
+MONGO_REVIEWS_COLLECTION = _env("MONGO_REVIEWS_COLLECTION", "book_reviews")
+
+# Neo4j configuration (Trabajo10)
+NEO4J_URI = _env("NEO4J_URI", "bolt://neo4j:7687")
+NEO4J_USER = _env("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = _env("NEO4J_PASSWORD", "secret")
+
+# Celery configuration (Trabajo10)
+CELERY_BROKER_URL = _env("CELERY_BROKER_URL", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = _env("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)

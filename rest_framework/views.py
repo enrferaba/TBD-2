@@ -7,7 +7,7 @@ from typing import Any, Callable
 class APIView:
     """Very small subset of DRF's APIView."""
 
-    http_method_names = {"get"}
+    http_method_names = {"get", "post", "put", "patch", "delete"}
 
     @classmethod
     def as_view(cls, **initkwargs: Any) -> Callable[..., Any]:

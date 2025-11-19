@@ -10,6 +10,7 @@ class HttpRequest:
     method: str = "GET"
     path: str = "/"
     body: bytes | None = None
+    user: Any | None = None
 
 
 class HttpResponse:
